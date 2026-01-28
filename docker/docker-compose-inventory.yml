@@ -1,9 +1,11 @@
 version: "3.8"
 
 services:
-  inventory-service:
-    build: ../inventoryversion:
-    container_name: inventory-service
+  inventory:
+    build:
+      context: ./inventory
+      dockerfile: Dockerfile
+    container_name: inventory
     restart: on-failure
 
     environment:
@@ -12,10 +14,14 @@ services:
       SPRING_DATASOURCE_PASSWORD: postgres
 
     ports:
-      - "8081:8080"  
+      - "8081:8080"
 
     depends_on:
       - postgres
 
     networks:
       - microservices-net
+
+networks:
+  microservices-net:
+    driver: bridge

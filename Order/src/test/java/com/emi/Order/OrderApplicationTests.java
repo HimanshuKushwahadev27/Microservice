@@ -20,7 +20,7 @@ class OrderApplicationTests {
 	@BeforeEach
 	void setUp() {
 		RestAssured.baseURI="http://localhost";
-		RestAssured.port=port;
+		RestAssured.port=8082;
 	}
 	
 	@Test
@@ -28,8 +28,8 @@ class OrderApplicationTests {
 		String request="""
 				{
 				    "pricePaid":"1500",
-				    "quantity":"700",
-				    "skuCode":"wwvwrgrhet6"
+				    "quantity":"10",
+				    "skuCode":"phone"
 				}
 				""";
 		
@@ -44,8 +44,8 @@ class OrderApplicationTests {
 		            .log().all()
 		  
 		            .body("pricePaid", Matchers.equalTo(1500))
-		            .body("quantity", Matchers.equalTo(700))
-		            .body("skuCode",Matchers.equalTo("wwvwrgrhet6"))
+		            .body("quantity", Matchers.equalTo(10))
+		            .body("skuCode",Matchers.equalTo("phone"))
 		            
 		            ;
 	}

@@ -1,14 +1,11 @@
-# Use official OpenJDK distribution
-FROM eclipse-temurin:21-jdk
-
-# Set working directory inside container
+FROM maven:3.9.6-eclipse-temurin-21 AS build
 WORKDIR /app
+COPY pom.xml .
+COPY src ./src
+RUN mvn clean package -DskipTests
 
-# Copy the built Spring Boot jar into container
-COPY target/*.jar app.jar
-
-# Expose the internal application port
+FROM eclipse-temurin:21-jdk
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8080
-
-# Command to run the application
 ENTRYPOINT ["java","-jar","app.jar"]

@@ -1,13 +1,15 @@
 version: "3.8"
 
 services:
-  product-service:
-    build: ../product
-    container_name: product-service
-    restart: always
+  inventory:
+    build:
+      context: ./inventory
+      dockerfile: Dockerfile
+    container_name: inventory
+    restart: on-failure
 
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/product_db
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/inventory_db
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
 
@@ -19,3 +21,7 @@ services:
 
     networks:
       - microservices-net
+
+networks:
+  microservices-net:
+    driver: bridge

@@ -9,7 +9,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: product_db
+      POSTGRES_DB: product_db   # default DB (others created via init.sql)
 
     ports:
       - "5433:5432"
@@ -21,33 +21,35 @@ services:
     networks:
       - microservices-net
 
-  product-service:
-    image: product:latest
-    container_name: product-service
-    restart: always
+
+  inventory:
+    build:
+      context: ../inventory
+      dockerfile: Dockerfile
+    container_name: inventory
+    restart: on-failure
+
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/inventory_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+
+    ports:
+      - "8081:8080"
 
     depends_on:
       - postgres
-
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/product_db
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: postgres
-      SPRING_JPA_HIBERNATE_DDL_AUTO: update
-
-    ports:
-      - "8083:8080"
 
     networks:
       - microservices-net
 
-  order-service:
-    image: order:latest
-    container_name: order-service
-    restart: always
 
-    depends_on:
-      - postgres
+  order:
+    build:
+      context: ../order
+      dockerfile: Dockerfile
+    container_name: order
+    restart: on-failure
 
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/order_db
@@ -57,25 +59,31 @@ services:
     ports:
       - "8082:8080"
 
+    depends_on:
+      - postgres
+      - inventory
+
     networks:
       - microservices-net
 
 
-  inventory-service:
-    image: inventory:latest
-    container_name: inventory-service
-    restart: always
-
-    depends_on:
-      - postgres
+  product:
+    build:
+      context: ../product
+      dockerfile: Dockerfile
+    container_name: product
+    restart: on-failure
 
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/inventory_db
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/product_db
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
 
     ports:
-      - "8081:8080"
+      - "8083:8080"
+
+    depends_on:
+      - postgres
 
     networks:
       - microservices-net

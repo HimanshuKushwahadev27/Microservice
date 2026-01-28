@@ -17,7 +17,7 @@ public class InventoryController {
 	private final InventoryService service;
 	
 	@GetMapping()
-	public boolean checkInventory(@RequestParam String kuCode, @RequestParam Integer quantity) {
-		return service.isInStock(kuCode, quantity);
+	public boolean checkInventory(@RequestParam String skuCode, @RequestParam Integer quantity) {
+		return service.isInStock(skuCode, quantity);
 	}
 }
